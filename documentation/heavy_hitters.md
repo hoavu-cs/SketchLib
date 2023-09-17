@@ -1,14 +1,17 @@
 ## Heavy Hitters  
   
-This class provides a space and time efficient data structure (called a sketch) to find the most frequent elements of a data stream. All elements that occur at least `phi * m` times are returned (where `m` is the length of the stream), while elements that occur less than`(phi - epsilon) * m` times are ignored. 
+This class provides a space and time efficient data structure to find the most frequent elements of a data stream. 
+All elements that occur at least `phi * m` times are returned (where `m` is the length of the stream), while elements that occur less than`(phi - epsilon) * m` times are ignored. 
   
 Currently, there are two classes CountMinCashRegister and MisraGries that implement the heavy hitters algorithm. 
 
 CountMinCashRegister is an implementation of the heavy hitters algorithm using the Count-Min sketch data structure by Graham Cormode and S. Muthukrishnan in the cash register model. 
+Count-Min sketch might return some incorrect heavy hitters with probability `delta`. Count-Min sketch can work with non-integer counts. 
 
 MisraGries is an implementation of the heavy hitters algorithm using the Misra-Gries sketch data structure by J. Misra and David Gries.
+Misra-Gries sketch is deterministic and will always return the correct heavy hitters. However, it can only work with integer counts.
+If you work with non-integer counts or large integer counts, it is also recommended to use CountMinCashRegister instead as Misra-Gries.
 
-CountMinCashRegister supports insertions of positive counts only, while MisraGries supports insertions with positive integer counts.
 
 To import the class, use the following:  
   
@@ -25,7 +28,7 @@ from sketchlib.heavy_hitters import MisraGries
 
 ### Overview  
   
-It supports the following operations:  
+These support the following operations:  
   
 - insert a token and count (default is 1) as encountered in the data stream. 
 - return all heavy hitter elements and their approximate counts. 
@@ -64,6 +67,11 @@ For MisraGries, the count must be a positive integer.
 
 ### get_heavy_hitters
 Returns a dictionary of all the heavy-hitters that have appeared in the stream so far along with an estimated count for each.
+Recall that all elements that occur at least `phi * m` times are returned (where `m` is the length of the stream), while elements that occur less than`(phi - epsilon) * m` times are ignored. 
+
+For CountMinCashRegister, the estimate is within a factor of `(1 + epsilon)` with probability `1 - delta` of the true count.
+For MisraGries, the estimate is within a factor of `(1 - epsilon)` of the true count.
+
   
 For example,  
 ```python
@@ -103,7 +111,8 @@ print(stream.get_heavy_hitters())
   
 ### + Operator  
   
-If A is a sketch of some stream and B is a sketch of another stream, then A + B returns the merged sketch that provides the answer to the combined stream. In other words, A = A+B is the same as A.merge(B).   
+If A is a sketch of some stream and B is a sketch of another stream, then A + B returns the merged sketch that provides the answer to the combined stream. 
+In other words, A = A+B is the same as A.merge(B).   
   
 For example,  
   
