@@ -24,10 +24,7 @@ To initialize an instance of this class, we can specify the following parameters
 - `delta`: controls the failure probability. The default value is `0.01`.
 - `epsilon`: controls the estimate's quality. The default value is `0.01`.
 - `seed`: the seed for randomness. The default value is `42`.
-- `algorithm`:
-    -
 
- 
 
 For example,
 
