@@ -7,14 +7,12 @@ from copy import deepcopy
 class MinHash:
     max_128_int = pow(2, 128) - 1
 
-    def __init__(self, epsilon=0.1, hash_type="mmh3"):
+    def __init__(self, epsilon=0.1, hash_type="mmh3", seed=42):
         self.epsilon = epsilon
         self.hash_type = hash_type
         self.k = 4 * math.ceil(1 / pow(self.epsilon, 2))
-
-        self.seed_range = int(math.pow(self.k, 2))
-        self.seeds = np.random.randint(1, self.seed_range, self.k)
-
+        self.seed = seed
+        self.seeds = np.array([self.seed * i for i in range(self.k)])
         self.minhash_signature = np.ones(self.k, dtype=float)
 
     def insert(self, token):
@@ -45,13 +43,7 @@ class MinHash:
     @classmethod
     def from_existing(cls, original):
         """Creates a new minhash based on the parameters of an existing minhash."""
-        new_minhash = cls()
-        new_minhash.epsilon = original.epsilon
-        new_minhash.hash_type = original.hash_type
-        new_minhash.k = original.k
-        new_minhash.seed_range = original.seed_range
-        new_minhash.seeds = original.seeds
-        new_minhash.minhash_signature = np.ones(new_minhash.k, dtype=float)
+        new_minhash = cls(epsilon=original.epsilon, hash_type=original.hash_type, seed=original.seed)
         return new_minhash
 
     def _check_mergeability(self, other_minhash):

@@ -75,6 +75,17 @@ class CountMinCashRegister(AbstractHeavyHitters):
         """ Retrieve all heavy hitters from the min heap. """
         return {item: self.count_min.estimate_count(item) for _, item in self._min_heap}
 
+    def merge(self, other):
+        """ Merges another heavy-hitter instance into this one. Both instances being
+            merged need to share all parameters and hash seeds; otherwise, the merge will fail. """
+        self.count_min.merge(other.count_min)
+        self.l1_norm += other.l1_norm
+        self._min_heap.extend(other._min_heap)
+        heapify(self._min_heap)
+
+        cutoff = self.phi * self.l1_norm
+        self.remove_below_cutoff(cutoff)
+
     @classmethod
     def from_existing(cls, original):
         """ Creates a new sketch based on the parameters of an existing sketch.
@@ -88,39 +99,21 @@ class CountMinCashRegister(AbstractHeavyHitters):
         new_instance._min_heap = []
         return new_instance
 
-    def merge(self, other):
-        """ Merges another heavy-hitter instance into this one. Both instances being
-            merged need to share all parameters and hash seeds; otherwise, the merge will fail. """
-        self.count_min.merge(other.count_min)
-        self.l1_norm += other.l1_norm
-        self._min_heap.extend(other._min_heap)
-        heapify(self._min_heap)
-
-        cutoff = self.phi * self.l1_norm
-        self.remove_below_cutoff(cutoff)
-
 # --------------------------------------------------------------------------
 
 class MisraGries(AbstractHeavyHitters):
     """ Implements the Misra-Gries algorithm for finding frequent items (heavy hitters). """
 
-    def __init__(self, phi=0.05, epsilon=0.2, delta=0.01, seed=42):
-        self.init_params(phi, epsilon, delta, seed)
+    def __init__(self, phi=0.05, epsilon=0.2):
+        self.init_params(phi, epsilon)
         self.counters = {}
         self.m = 0
 
-    def init_params(self, phi, epsilon, delta, seed):
+    def init_params(self, phi, epsilon):
         """ Initialize parameters and compute the number of buckets. """
         self.phi = phi
         self.epsilon = epsilon
-        self.seed = seed
         self.k = ceil(1 / (self.phi * self.epsilon))
-
-    @classmethod
-    def from_phi_and_eps(cls, phi=0.0025, epsilon=0.2):
-        new_instance = cls()
-        new_instance.init_params(phi, epsilon, None, None)
-        return new_instance
 
     def insert(self, token, count=1):
         """ Insert a token into the counters. """
@@ -168,3 +161,9 @@ class MisraGries(AbstractHeavyHitters):
                     keys_to_delete.append(key)
             for key in keys_to_delete:
                 del self.counters[key]
+
+    @classmethod
+    def from_phi_and_eps(cls, phi=0.0025, epsilon=0.2):
+        new_instance = cls()
+        new_instance.init_params(phi=phi, epsilon=epsilon)
+        return new_instance

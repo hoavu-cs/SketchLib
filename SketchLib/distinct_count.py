@@ -87,4 +87,5 @@ class LogDistinctCount(AbstractDistinctCount):
 
     @classmethod
     def from_existing(cls, original):
-        return cls(original.epsilon, original.delta, original.hash_type, original.seed)
+        return cls(epsilon=original.epsilon, delta=original.delta,\
+             hash_type=original.hash_type, seed=original.seed)
