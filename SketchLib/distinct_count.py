@@ -54,6 +54,9 @@ class LogDistinctCount(AbstractDistinctCount):
             return mmh3.hash128(token, seed, signed=False) / self._max_128_int
 
     def _insert_into_table(self, i, hash_value):
+        """ 
+        Insert a hash value into the i-th row of the table while maintaining the sorted order.
+        """
         j = self._binary_search(self._table[i], hash_value)
         if j == -1:
             if len(self._table[i]) < self._width:
@@ -63,6 +66,7 @@ class LogDistinctCount(AbstractDistinctCount):
                 self._table[i].pop()
 
     def insert(self, token):
+        """ Insert a token into the sketch. """
         if len(self._naive_lst) < self._width:
             self._naive_lst.add(token)
 
@@ -71,6 +75,7 @@ class LogDistinctCount(AbstractDistinctCount):
             self._insert_into_table(i, hash_value)
 
     def merge(self, S):
+        """ Merge S with self. """
         self._naive_lst |= S._naive_lst
         self._naive_lst = set(list(self._naive_lst)[:self._width])
 
@@ -79,6 +84,7 @@ class LogDistinctCount(AbstractDistinctCount):
                 self._insert_into_table(i, x)
 
     def estimator(self):
+        """ Estimate the number of distinct elements in the stream so far. """
         if len(self._naive_lst) < self._width:
             return len(self._naive_lst)
 
