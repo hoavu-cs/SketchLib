@@ -35,17 +35,17 @@ class CountMinCashRegister(AbstractHeavyHitters):
         each token count must be greater than 0 (c > 0)."""
         
     def __init__(self, phi=0.05, epsilon=0.2, delta=0.01, seed=42):
-        self.init_params(phi, epsilon, delta, seed)
-        self.l1_norm = 0
+        self._init_params(phi, epsilon, delta, seed)
+        self._l1_norm = 0
         self._min_heap = []
 
-    def init_params(self, phi, epsilon, delta, seed):
+    def _init_params(self, phi, epsilon, delta, seed):
         """ Initialize parameters and create a CountMin object. """
-        self.phi = phi
-        self.epsilon = epsilon
-        self.delta = delta
-        self.seed = seed
-        self.count_min = CountMin(phi=phi, epsilon=epsilon, delta=delta, seed=seed)
+        self._phi = phi
+        self._epsilon = epsilon
+        self._delta = delta
+        self._seed = seed
+        self._count_min = CountMin(phi=phi, epsilon=epsilon, delta=delta, seed=seed)
 
     def insert(self, token, count):
         """ Insert a token into the count-min sketch and update the heap of heavy hitters. """
@@ -54,13 +54,13 @@ class CountMinCashRegister(AbstractHeavyHitters):
 
     def update_l1_norm(self, count):
         """ Update the l1_norm based on the incoming count. """
-        self.l1_norm += count
+        self._l1_norm += count
 
     def update_heap(self, token, count):
         """ Update the min heap based on the newly inserted token. """
-        cutoff = self.phi * self.l1_norm
-        self.count_min.insert(str(token), count)
-        point_query = self.count_min.estimate_count(token)
+        cutoff = self._phi * self._l1_norm
+        self._count_min.insert(str(token), count)
+        point_query = self._count_min.estimate_count(token)
         if point_query >= cutoff:
             heappush(self._min_heap, (point_query, token))
         
@@ -73,17 +73,17 @@ class CountMinCashRegister(AbstractHeavyHitters):
 
     def get_heavy_hitters(self):
         """ Retrieve all heavy hitters from the min heap. """
-        return {item: self.count_min.estimate_count(item) for _, item in self._min_heap}
+        return {item: self._count_min.estimate_count(item) for _, item in self._min_heap}
 
     def merge(self, other):
         """ Merges another heavy-hitter instance into this one. Both instances being
             merged need to share all parameters and hash seeds; otherwise, the merge will fail. """
-        self.count_min.merge(other.count_min)
-        self.l1_norm += other.l1_norm
+        self._count_min.merge(other._count_min)
+        self._l1_norm += other._l1_norm
         self._min_heap.extend(other._min_heap)
         heapify(self._min_heap)
 
-        cutoff = self.phi * self.l1_norm
+        cutoff = self._phi * self._l1_norm
         self.remove_below_cutoff(cutoff)
 
     @classmethod
@@ -93,9 +93,9 @@ class CountMinCashRegister(AbstractHeavyHitters):
             seeds. Therefore, to create mergeable sketches, use an original to
             create new instances. """
         new_instance = cls()
-        new_instance.init_params(original.phi, original.epsilon, original.delta, original.seed)
-        new_instance.count_min = CountMin.from_existing(original.count_min)
-        new_instance.l1_norm = 0
+        new_instance._init_params(original._phi, original._epsilon, original._delta, original._seed)
+        new_instance._count_min = CountMin.from_existing(original._count_min)
+        new_instance._l1_norm = 0
         new_instance._min_heap = []
         return new_instance
 
@@ -105,65 +105,67 @@ class MisraGries(AbstractHeavyHitters):
     """ Implements the Misra-Gries algorithm for finding frequent items (heavy hitters). """
 
     def __init__(self, phi=0.05, epsilon=0.2):
-        self.init_params(phi, epsilon)
-        self.counters = {}
-        self.m = 0
+        self._init_params(phi, epsilon)
+        self._counters = {}
+        self._m = 0
 
-    def init_params(self, phi, epsilon):
+    def _init_params(self, phi, epsilon):
         """ Initialize parameters and compute the number of buckets. """
-        self.phi = phi
-        self.epsilon = epsilon
-        self.k = ceil(1 / (self.phi * self.epsilon))
+        self._phi = phi
+        self._epsilon = epsilon
+        self._k = ceil(1 / (self._phi * self._epsilon))
 
     def insert(self, token, count=1):
         """ Insert a token into the counters. """
         for _ in range(count):
-            self.m += 1
-            self.update_counters(token)
+            self._m += 1
+            self._update_counters(token)
         
-    def update_counters(self, token):
+    def _update_counters(self, token):
         """ Update the counters based on the newly inserted token. """
-        if token in self.counters:
-            self.counters[token] += 1
+        if token in self._counters:
+            self._counters[token] += 1
         else:
-            if len(self.counters) < self.k - 1:
-                self.counters[token] = 1
+            if len(self._counters) < self._k - 1:
+                self._counters[token] = 1
             else:
-                self.decrement_counters()
+                self._decrement_counters()
 
-    def decrement_counters(self):
+    def _decrement_counters(self):
         """ Decrement all counters and remove those that reach zero. """
-        for key in list(self.counters.keys()):
-            self.counters[key] -= 1
-            if self.counters[key] == 0:
-                del self.counters[key]
+        for key in list(self._counters.keys()):
+            self._counters[key] -= 1
+            if self._counters[key] == 0:
+                del self._counters[key]
 
     def get_heavy_hitters(self):
         """ Retrieve all heavy hitters based on the set threshold. """
-        threshold = (1 - self.epsilon) * self.phi * self.m
-        return {k: v for k, v in self.counters.items() if v > threshold}
+        threshold = (1 - self._epsilon) * self._phi * self._m
+        return {k: v for k, v in self._counters.items() if v > threshold}
 
     def merge(self, other):
         """ Merge another Misra-Gries instance into this one. """
-        self.m += other.m
-        for key, value in other.counters.items():
-            self.counters[key] = self.counters.get(key, 0) + value
-        self.prune_counters()
+        self._m += other._m
+        for key, value in other._counters.items():
+            self._counters[key] = self._counters.get(key, 0) + value
+        self._prune_counters()
 
-    def prune_counters(self):
+    def _prune_counters(self):
         """ Remove excess counters and decrement remaining ones if necessary. """
-        if len(self.counters) > self.k:
-            min_value = sorted(self.counters.values())[self.k]
+        if len(self._counters) > self._k:
+            min_value = sorted(self._counters.values())[self._k]
             keys_to_delete = []
-            for key in self.counters.keys():
-                self.counters[key] -= min_value
-                if self.counters[key] <= 0:
+            for key in self._counters.keys():
+                self._counters[key] -= min_value
+                if self._counters[key] <= 0:
                     keys_to_delete.append(key)
             for key in keys_to_delete:
-                del self.counters[key]
+                del self._counters[key]
 
     @classmethod
     def from_phi_and_eps(cls, phi=0.0025, epsilon=0.2):
         new_instance = cls()
-        new_instance.init_params(phi=phi, epsilon=epsilon)
+        new_instance._init_params(phi=phi, epsilon=epsilon)
         return new_instance
+
+        

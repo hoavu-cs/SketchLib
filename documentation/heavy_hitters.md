@@ -82,7 +82,7 @@ stream.insert("lightweight", 1)
   
 print(stream.get_heavy_hitters())  
 
->>> {'heavy-hitter': 10001}
+>>> {'heavy-hitter': 10000}
 
 ```  
   

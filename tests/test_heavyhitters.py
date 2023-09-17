@@ -64,6 +64,8 @@ class TestHeavyHitters(unittest.TestCase):
         merged_register = cash_register1 + cash_register2
         heavy_hitters = merged_register.get_heavy_hitters()
 
+        print(heavy_hitters)
+
         self.assertIn('apple', heavy_hitters)
         self.assertIn('orange', heavy_hitters)
         self.assertNotIn('banana', heavy_hitters)
@@ -84,6 +86,8 @@ class TestHeavyHitters(unittest.TestCase):
 
         misra1.merge(misra2)
         heavy_hitters = misra1.get_heavy_hitters()
+
+        print(heavy_hitters)
 
         self.assertIn('apple', heavy_hitters)
         self.assertIn('orange', heavy_hitters)

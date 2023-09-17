@@ -33,59 +33,59 @@ class AbstractDistinctCount:
 class LogDistinctCount(AbstractDistinctCount):
 
     def __init__(self, epsilon=0.01, delta=0.01, hash_type="mmh3", seed=42):
-        self.epsilon = epsilon
-        self.delta = delta
-        self.hash_type = hash_type
-        self.seed = seed
-        self.max_128_int = pow(2, 128) - 1
-        self.c = 2
-        self.width = self.c * int((1 / self.epsilon) ** 2)
-        self.depth = self.c * int(math.log(1 / self.delta, 2))
-        self.seeds = [self.seed * i for i in range(self.depth)]
-        self.table = [[] for _ in range(self.depth)]
-        self.naive_lst = set()
+        self._epsilon = epsilon
+        self._delta = delta
+        self._hash_type = hash_type
+        self._seed = seed
+        self._max_128_int = pow(2, 128) - 1
+        self._c = 2
+        self._width = self._c * int((1 / self._epsilon) ** 2)
+        self._depth = self._c * int(math.log(1 / self._delta, 2))
+        self._seeds = [self._seed * i for i in range(self._depth)]
+        self._table = [[] for _ in range(self._depth)]
+        self._naive_lst = set()
 
     def _binary_search(self, a, x):
         i = bisect_left(a, x)
         return i if i != len(a) and a[i] == x else -1
 
     def _hash(self, token, seed):
-        if self.hash_type == "mmh3":
-            return mmh3.hash128(token, seed, signed=False) / self.max_128_int
+        if self._hash_type == "mmh3":
+            return mmh3.hash128(token, seed, signed=False) / self._max_128_int
 
     def _insert_into_table(self, i, hash_value):
-        j = self._binary_search(self.table[i], hash_value)
+        j = self._binary_search(self._table[i], hash_value)
         if j == -1:
-            if len(self.table[i]) < self.width:
-                insort(self.table[i], hash_value)
-            elif self.table[i][-1] > hash_value:
-                insort(self.table[i], hash_value)
-                self.table[i].pop()
+            if len(self._table[i]) < self._width:
+                insort(self._table[i], hash_value)
+            elif self._table[i][-1] > hash_value:
+                insort(self._table[i], hash_value)
+                self._table[i].pop()
 
     def insert(self, token):
-        if len(self.naive_lst) < self.width:
-            self.naive_lst.add(token)
+        if len(self._naive_lst) < self._width:
+            self._naive_lst.add(token)
 
-        for i, seed in enumerate(self.seeds):
+        for i, seed in enumerate(self._seeds):
             hash_value = self._hash(token, seed)
             self._insert_into_table(i, hash_value)
 
     def merge(self, S):
-        self.naive_lst |= S.naive_lst
-        self.naive_lst = set(list(self.naive_lst)[:self.width])
+        self._naive_lst |= S._naive_lst
+        self._naive_lst = set(list(self._naive_lst)[:self._width])
 
-        for i in range(self.depth):
-            for x in S.table[i]:
+        for i in range(self._depth):
+            for x in S._table[i]:
                 self._insert_into_table(i, x)
 
     def estimator(self):
-        if len(self.naive_lst) < self.width:
-            return len(self.naive_lst)
+        if len(self._naive_lst) < self._width:
+            return len(self._naive_lst)
 
-        est = [int(self.width / row[-1]) for row in self.table]
+        est = [int(self._width / row[-1]) for row in self._table]
         return int(statistics.median(est))
 
     @classmethod
     def from_existing(cls, original):
-        return cls(epsilon=original.epsilon, delta=original.delta,\
-             hash_type=original.hash_type, seed=original.seed)
+        return cls(epsilon=original._epsilon, delta=original._delta,\
+             hash_type=original._hash_type, seed=original._seed)

@@ -194,3 +194,25 @@ print(false_positives)
 
 >>> 12
 ```
+
+# get_filter
+
+Return the bit filter array of the Bloom Filter. 
+
+```python
+from sketchlib.bloom_filter import BloomFilter
+
+# Initialize a Bloom Filter with 1000 maximum insertions and a false positive rate of 1%
+bf = BloomFilter(n=10, delta=0.1)
+
+# Test: Insert elements
+elements_to_insert = ['apple', 'banana', 'cherry']
+for elem in elements_to_insert:
+    bf.insert(elem)
+
+print(bf.get_filter())
+
+>> [1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 1 0 0 0 0 0 0 0 1 0 0
+ 0 0 0 1 0 0 0 1 1 0 0]
+
+```
