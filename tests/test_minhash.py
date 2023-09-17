@@ -36,10 +36,27 @@ class TestMinHash(unittest.TestCase):
             self.minhash2.insert(elem)
         
         estimated_jaccard = self.minhash1.estimate_jaccard_similarity(self.minhash2)
-        
         actual_jaccard = len(set1.intersection(set2)) / len(set1.union(set2))
-        
         self.assertTrue(np.isclose(estimated_jaccard, actual_jaccard, atol=0.1))
+
+    def test_merge(self):
+        set1 = set([''.join(random.choices(string.ascii_lowercase, k=5)) for _ in range(1000)])
+        set2 = set([''.join(random.choices(string.ascii_lowercase, k=5)) for _ in range(800)]) 
+        
+        # Insert elements from set1 and set2 into MinHash instances
+        for elem in set1:
+            self.minhash1.insert(elem)
+        
+        for elem in set2:
+            self.minhash2.insert(elem)
+        
+        self.minhash1 += self.minhash2
+        set1 = set1.union(set2)
+
+        estimated_jaccard = self.minhash1.estimate_jaccard_similarity(self.minhash2)
+        actual_jaccard = len(set1.intersection(set2)) / len(set1.union(set2))
+        self.assertTrue(np.isclose(estimated_jaccard, actual_jaccard, atol=0.1))
+
 
 if __name__ == '__main__':
     unittest.main()
