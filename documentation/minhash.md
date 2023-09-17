@@ -22,6 +22,7 @@ The update time is `O(1/eps^2)`. It supports the following operations:
 To initialize an instance of this class, we can specify the following parameters:
 
 - `epsilon`: controls the estimate's quality. The default value is `0.01`.
+- `seed`: the seed for randomness. The default value is `42`.
 
 For example,
 
@@ -123,7 +124,7 @@ print(stream1.estimate_jaccard_similarity(stream3))
 
 ### from_existing 
 
-Create a new minhash based on the parameters of an existing minhash so that they can be merged later.
+Create a new minhash based on the parameters (e.g., seed) of an existing minhash so that they can be merged later.
 
 For example,
 
