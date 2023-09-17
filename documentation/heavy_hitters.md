@@ -13,7 +13,7 @@ CountMinCashRegister supports insertions of positive counts only, while MisraGri
 To import the class, use the following:  
   
 ```python  
-from sketchlib.heavy_hitters import HeavyHittersFinder 
+from sketchlib.heavy_hitters import CountMinCashRegister 
 ```  
 
 or 
