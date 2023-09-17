@@ -53,5 +53,5 @@ class BloomFilter:
 
     @classmethod
     def from_existing(cls, original):
-        "" "Create a new Bloom Filter based on an existing one. """
+        """ Create a new Bloom Filter based on an existing one. """
         return cls(n=original._n, delta=original._delta, seed=original._seed)

@@ -24,7 +24,8 @@ class MinHash:
                 self._minhash_signature[i] = current_hash
 
     def merge(self, other_mh):
-        """Merges two minhash signatures resulting in a single signature representing the union of the two original sets."""
+        """ Merges two minhash signatures resulting in a single signature 
+        representing the union of the two original sets. """
         try:
             self._check_mergeability(other_mh)
             self._minhash_signature = np.minimum(self._minhash_signature, other_mh._minhash_signature)
@@ -32,24 +33,24 @@ class MinHash:
             print("Merge attempted on incompatible minhash instances.")
 
     def __add__(self, other_minhash):
-        """Performs merge but returns result in completely new minhash."""
+        """ Performs merge but returns result in completely new minhash."""
         merged_minhash = deepcopy(self)
         merged_minhash.merge(other_minhash)
         return merged_minhash
 
     def _hash(self, token, seed):
-        """Compute the hash of a token."""
+        """ Compute the hash of a token. """
         if self._hash_type == "mmh3":
             return mmh3.hash(token, seed, signed=False) / MinHash.max_128_int
 
     @classmethod
     def from_existing(cls, original):
-        """Creates a new minhash based on the parameters of an existing minhash."""
+        """ Creates a new minhash based on the parameters of an existing minhash."""
         new_minhash = cls(epsilon=original._epsilon, hash_type=original._hash_type, seed=original._seed)
         return new_minhash
 
     def _check_mergeability(self, other_minhash):
-        """Compares other minhash signature attributes to make sure that merges or Jaccard similarity estimates make sense."""
+        """ Compares other minhash signature attributes to make sure that merges or Jaccard similarity estimates make sense. """
         if other_minhash._k != self._k:
             raise AttributeError("Minhash signature sets must be of equal lengths k in order to merge.")
         else:
@@ -57,11 +58,11 @@ class MinHash:
                 raise AttributeError("Minhash hash functions must have same seed values for valid result.")
 
     def estimate_jaccard_similarity(self, other_mh):
-        """Provides an estimate for the Jaccard Similarity of two sets."""
+        """ Provides an estimate for the Jaccard Similarity of two sets. """
         counter = np.sum(self._minhash_signature == other_mh._minhash_signature)
         return counter / self._k
 
     def get_signature(self):
-        """Returns the minhash signature."""
+        """ Returns the minhash signature."""
         return self._minhash_signature
 

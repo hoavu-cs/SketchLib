@@ -36,11 +36,13 @@ class CountMin:
         return bin_number
 
     def insert(self, token, count):
+        """  Insert a token and its count into the sketch."""
         for row in range(self._depth):
             col = self._hash(token, self._hash_seeds[row])
             self._table[row, col] += count
 
     def estimate_count(self, token):
+        """ Get the estimate of the count of a token."""
         estimates = np.zeros(self._depth, dtype=int)
         for row in range(self._depth):
             col = self._hash(token, self._hash_seeds[row])
@@ -48,4 +50,5 @@ class CountMin:
         return estimates.min()
 
     def merge(self, other_count_min):
+        """ Merge self with another count-min sketch (make sure the seeds are the same)."""
         self._table += other_count_min._table

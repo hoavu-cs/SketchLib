@@ -32,7 +32,7 @@ class AbstractHeavyHitters:
 class CountMinCashRegister(AbstractHeavyHitters):
     """ This class solves the heavy hitters problem using a count-min data
         structure. It works only for the cash register model of a stream where
-        each token count must be greater than 0 (c > 0)."""
+        each token count must be greater than 0 (c > 0). """
         
     def __init__(self, phi=0.05, epsilon=0.2, delta=0.01, seed=42):
         self._init_params(phi, epsilon, delta, seed)

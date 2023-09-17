@@ -60,9 +60,7 @@ class LogDistinctCount(AbstractDistinctCount):
             return mmh3.hash128(token, seed, signed=False) / LogDistinctCount._max_128_int
 
     def _insert_into_table(self, i, hash_value):
-        """ 
-        Insert a hash value into the i-th row of the table while maintaining the sorted order.
-        """
+        """ Insert a hash value into the i-th row of the table while maintaining the sorted order. """
         j = self._binary_search(self._table[i], hash_value)
         if j == -1:
             if len(self._table[i]) < self._width:

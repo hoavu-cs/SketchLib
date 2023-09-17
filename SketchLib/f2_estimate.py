@@ -13,7 +13,8 @@ class F2Estimate():
     _max_128_int = pow(2, 128) - 1
     
     def __init__(self, epsilon=0.01, delta=0.01, hash_type="mmh3", seed=42):
-        """ estimate the second frequency moment of a stream using the tug-of-war sketch.
+        """ 
+        estimate the second frequency moment of a stream using the tug-of-war sketch.
         epsilon: relative error,
         delta: failure probability.
         """
@@ -30,8 +31,7 @@ class F2Estimate():
         self._seeds = np.array([[self._seed * i * j for j in range(self._width)] for i in range(self._depth)])
 
     def _hash(self, token, seed):
-        """ Compute the {-1,+1} hash of a token.
-        """
+        """ Compute the {-1,+1} hash of a token. """
         if self._hash_type == "mmh3":
             x = mmh3.hash128(token, seed, signed=False) / F2Estimate._max_128_int
             return -1 if x <= 0.5 else 1
@@ -39,28 +39,23 @@ class F2Estimate():
             return 0
 
     def insert(self, x, y):
-        """ Insert token x into the stream with weight y.
-        """
+        """ Insert token x into the stream with weight y. """
         for i in range(self._depth):
             for j in range(self._width):
                 self._table[i, j] += self._hash(x, self._seeds[i, j]) * y
 
     def merge(self, S):
-        """ Merge with another F2 sketch S.
-        Require that S has the same seed, eps, & delta.
-        """
+        """ Merge with another F2 sketch S. Require that S has the same seed, eps, & delta."""
         self._table += S._table
 
     def __add__(self, S):
-        """ Return the merged sketch of self and S
-        """
+        """ Return the merged sketch of self and S. """
         merged_sketch = deepcopy(self)
         merged_sketch.merge(S)
         return merged_sketch
 
     def estimator(self):
-        """ Return the F2 estimator of the current stream.
-        """
+        """ Return the F2 estimator of the current stream. """
         avg = [statistics.mean(self._table[i]**2) for i in range(self._depth)]
         return statistics.median(avg)
 
@@ -68,6 +63,5 @@ class F2Estimate():
     def from_existing(cls, original):
         """ Creates a new sketch based on the parameters of an existing sketch.
         Two sketches are mergeable iff they share array size and hash seeds.
-        Therefore, to create mergeable sketches, use an original to create new instances.
-        """
+        Therefore, to create mergeable sketches, use an original to create new instances. """
         return F2Estimate(epsilon=original._epsilon, delta=original._delta, hash_type=original._hash_type, seed=original._seed)
