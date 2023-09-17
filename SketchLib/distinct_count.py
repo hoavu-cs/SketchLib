@@ -31,6 +31,11 @@ class AbstractDistinctCount:
 # --------------------------------------------------------------------------
 
 class LogDistinctCount(AbstractDistinctCount):
+    """ This class solves the distinct count problem using a log sketch.
+    This folows the basic idea of Fjarolet and Martin's algorithm.
+    We however maintain the lowest 1/eps hash values instead of the lowest as
+    suggested in Bar-Yossef et al. (2002) to have a faster update time.
+    """
 
     _max_128_int = pow(2, 128) - 1
 

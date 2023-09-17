@@ -5,6 +5,10 @@ import numpy as np
 from copy import deepcopy
 
 class F2Estimate():
+    """ 
+    This is the tug-of-war sketch for estimating the second frequency moment of a stream 
+    proposed by Alon et al. 2000.
+    """
 
     _max_128_int = pow(2, 128) - 1
     

@@ -5,7 +5,8 @@ import numpy as np
 from copy import deepcopy
 
 class MinHash:
-    
+    """ MinHash Sketch """
+
     max_128_int = pow(2, 128) - 1
 
     def __init__(self, epsilon=0.1, hash_type="mmh3", seed=42):

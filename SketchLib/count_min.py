@@ -4,6 +4,8 @@ import numpy as np
 from copy import deepcopy
 
 class CountMin:
+    """ Count-Min Sketch """
+
     _max_128_int = pow(2, 128) - 1
 
     def __init__(self, phi=0.05, epsilon=0.2, delta=0.05, seed=10):
