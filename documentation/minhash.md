@@ -145,3 +145,17 @@ stream.merge(stream2)
 ### Get Signature
 
 get_signature() returns the signature of the minhash. The signature is a list smallest hash values. The length of the list is equal to the number of hash functions used which is set to be around `4/epsilon`.  
+
+```python
+stream = MinHash(epsilon=0.05)
+
+
+for i in range(100, 200):
+    stream.insert(str(i))
+
+print(stream.get_signature())
+
+>>> [1.47936769e-31 6.52484794e-32 3.44873565e-31 ... 3.60019348e-31
+ 1.77942097e-31 1.27540873e-31]
+
+```
