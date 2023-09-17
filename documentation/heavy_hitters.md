@@ -40,7 +40,7 @@ To initialize an instance of this class, we can specify the following parameters
 
   -`phi`: defines the cutoff for what constitutes a heavy hitter. The default value is `0.05`.
  - `epsilon`: controls margin of error within which false positives are permitted. 
- - `delta`: controls the failure probability. The default value is `0.01` (non-deterministic algorithms only). 
+ - `delta`: controls the failure probability. The default value is `0.01` (for CountMinCashRegister only). 
  - `seed`: the seed for randomness. The default value is `42`.
 
   
