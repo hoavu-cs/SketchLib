@@ -3,9 +3,8 @@ import math
 import numpy as np
 
 class BloomFilter:
-    """
-    Bloom Filter
-    """
+    """ Bloom Filter """
+
     _max_128_int = pow(2, 128) - 1
 
     def __init__(self, n=10000, delta=0.01, seed=42):
@@ -26,33 +25,33 @@ class BloomFilter:
         return int(x * self._m_minus_one)
 
     def delete(self, x):
-        """Delete x from the data structure."""
+        """ Delete x from the data structure."""
         self._B[[self._hash(x, seed) for seed in self._seeds]] -= 1
 
     def insert(self, x):
-        """Insert x to the data structure."""
+        """ Insert x to the data structure."""
         self._B[[self._hash(x, seed) for seed in self._seeds]] += 1
 
     def membership(self, x):
-        """Check if x is in the data structure."""
+        """ Check if x is in the data structure."""
         return all(self._B[self._hash(x, seed)] != 0 for seed in self._seeds)
 
     def merge(self, S):
-        """Combine self with Bloom filter S to obtain a new Bloom filter."""
+        """ Combine self with Bloom filter S to obtain a new Bloom filter."""
         self._B += S._B
 
     def __add__(self, S):
-        """Return the merged Bloom filter of self and S."""
+        """ Return the merged Bloom filter of self and S."""
         merged_filter = self.from_existing(self)
         merged_filter._B += self._B
         merged_filter._B += S._B
         return merged_filter
 
     def get_filter(self):
-        """Return the filter."""
+        """ Return the filter."""
         return self._B
 
     @classmethod
     def from_existing(cls, original):
-        """Create a new Bloom Filter based on an existing one."""
+        "" "Create a new Bloom Filter based on an existing one. """
         return cls(n=original._n, delta=original._delta, seed=original._seed)
