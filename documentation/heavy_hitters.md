@@ -36,7 +36,7 @@ It supports the following operations:
 To initialize an instance of this class, we can specify the following parameters:  
 
   -`phi`: defines the cutoff for what constitutes a heavy hitter. The default value is `0.05`.
- - `epsilon`: controls margin of error within which false positives are permitted. That is if we want to report all elements whose frequencies are at least phi*m but no element whose frequencies is less than (phi-epsilon)m where m is the total frequency. The default value is `0.02`.  
+ - `epsilon`: controls margin of error within which false positives are permitted. 
  - `delta`: controls the failure probability. The default value is `0.01` (non-deterministic algorithms only). 
  - `seed`: the seed for randomness. The default value is `42`.
 
