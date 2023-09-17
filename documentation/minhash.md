@@ -142,7 +142,7 @@ stream.merge(stream2)
 
 ```
 
-### Get Signature
+### get_signature
 
 get_signature() returns the signature of the minhash. The signature is a list smallest hash values. The length of the list is equal to the number of hash functions used which is set to be around `4/epsilon`.  
 
