@@ -9,7 +9,7 @@ To import the class, use the following:
 from sketchlib.minhash import MinHash
 ```
 
-### Overview
+### overview
 
 The update time is `O(1/eps^2)`. It supports the following operations:
 
@@ -17,7 +17,7 @@ The update time is `O(1/eps^2)`. It supports the following operations:
 - return an estimate of the Jaccard similarity between two sets to within a factor `1±eps`.
 - combine the minhashes of two sets so that we can treat the union of two sets as a single set.
 
-### Initialization
+### initialization
 
 To initialize an instance of this class, we can specify the following parameters:
 
@@ -95,7 +95,7 @@ print(stream.estimate_jaccard_similarity(stream3))
 
 ```
 
-### + Operator
+### + operator
 
 If A is a minhash of some stream and B is a minhash of another stream, then A + B returns the merged minhash representing the combined stream. In other words, A = A+B is the same as A.merge(B). 
 
