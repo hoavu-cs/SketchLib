@@ -5,6 +5,8 @@ import numpy as np
 from copy import deepcopy
 
 class F2Estimate():
+
+    _max_128_int = pow(2, 128) - 1
     
     def __init__(self, epsilon=0.01, delta=0.01, hash_type="mmh3", seed=42):
         """ estimate the second frequency moment of a stream using the tug-of-war sketch.
@@ -15,7 +17,6 @@ class F2Estimate():
         self._delta = delta
         self._hash_type = hash_type
         self._seed = seed
-        self._max_128_int = pow(2, 128) - 1
         self._c = 3  # Constant multiplier
 
         self._width = self._c * int(1 / (self._epsilon * self._epsilon))
@@ -28,7 +29,7 @@ class F2Estimate():
         """ Compute the {-1,+1} hash of a token.
         """
         if self._hash_type == "mmh3":
-            x = mmh3.hash128(token, seed, signed=False) / self._max_128_int
+            x = mmh3.hash128(token, seed, signed=False) / F2Estimate._max_128_int
             return -1 if x <= 0.5 else 1
         else:
             return 0

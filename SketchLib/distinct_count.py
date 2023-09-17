@@ -32,12 +32,13 @@ class AbstractDistinctCount:
 
 class LogDistinctCount(AbstractDistinctCount):
 
+    _max_128_int = pow(2, 128) - 1
+
     def __init__(self, epsilon=0.01, delta=0.01, hash_type="mmh3", seed=42):
         self._epsilon = epsilon
         self._delta = delta
         self._hash_type = hash_type
         self._seed = seed
-        self._max_128_int = pow(2, 128) - 1
         self._c = 2
         self._width = self._c * int((1 / self._epsilon) ** 2)
         self._depth = self._c * int(math.log(1 / self._delta, 2))
@@ -51,7 +52,7 @@ class LogDistinctCount(AbstractDistinctCount):
 
     def _hash(self, token, seed):
         if self._hash_type == "mmh3":
-            return mmh3.hash128(token, seed, signed=False) / self._max_128_int
+            return mmh3.hash128(token, seed, signed=False) / LogDistinctCount._max_128_int
 
     def _insert_into_table(self, i, hash_value):
         """ 

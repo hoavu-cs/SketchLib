@@ -29,7 +29,7 @@ class CountMin:
     def _hash(self, token, seed):
         """ Compute the hash of a token. Converts hash value to a bin number
             based on k."""
-        hash_value = mmh3.hash128(token, seed, signed=False) / self._max_128_int
+        hash_value = mmh3.hash128(token, seed, signed=False) / CountMin._max_128_int
         bin_number = int(hash_value * self._width)
         return bin_number
 
