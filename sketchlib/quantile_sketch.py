@@ -16,7 +16,7 @@ class QuantileSketch:
         """
         self._epsilon, self._delta, self._max_count, self._range_elements = epsilon, delta, max_count, n
         self._l1_norm, self._seed = 0, seed
-        self._num_dyadic_intervals = ceil(log2(n))
+        self._num_dyadic_intervals = ceil(log2(n)) + 1
         
         # Initialize Count-Min sketch for each dyadic interval
         cm_sketch_width = int(4 * log2(self._max_count) / epsilon)
@@ -31,7 +31,6 @@ class QuantileSketch:
             return []
         elif lower == upper:
             return [(lower, upper)]
-            
         split_point = lower + 2 ** floor(log2(upper - lower)) - 1
         return [(lower, split_point)] + self._decompose_into_dyadic_intervals(split_point + 1, upper)
 
@@ -46,8 +45,12 @@ class QuantileSketch:
         Given a list of dyadic intervals, return the estimate of the count of elements 
         in the union of these intervals.
         """
-        return sum(self._cm_sketch[int(log2(b - a + 1))].estimate_count(str(ceil(a / (1 << int(log2(b - a + 1))))))
-                  for a, b in intervals)
+        total_count = 0
+        for a, b in intervals:
+            level = int(log2(b - a + 1))
+            position = ceil(a / 2 ** level)
+            total_count += self._cm_sketch[level].estimate_count(str(position))
+        return total_count
 
     def insert(self, x, count=1):
         """
@@ -61,7 +64,7 @@ class QuantileSketch:
         """
         Query the sketch for the qth quantile.
         """
-        threshold, lower, upper = q * self._l1_norm, 1, self._max_count
+        threshold, lower, upper = q * self._l1_norm, 1, self._range_elements
         result = None
         while lower <= upper:
             mid = (lower + upper) // 2
