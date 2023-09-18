@@ -18,6 +18,7 @@ class MinHash:
         self._minhash_signature = np.ones(self._k, dtype=float)
 
     def insert(self, token):
+        """ Inserts a token into the set. """
         for i in range(self._k):
             current_hash = self._hash(token, self._seeds[i])
             if current_hash < self._minhash_signature[i]:
