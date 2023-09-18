@@ -193,7 +193,7 @@ print(false_positives)
 >>> 12
 ```
 
-# get_filter
+### get_filter
 
 Return the bit filter array of the Bloom Filter. 
 
