@@ -9,7 +9,7 @@ To import the class, use the following:
 from sketchlib.distinct_count import LogDistinctCount
 ```
 
-### Overview
+### overview
 
 The update time is `O(log 1/eps)`. It supports the following operations:
 
@@ -17,7 +17,7 @@ The update time is `O(log 1/eps)`. It supports the following operations:
 - return the estimate for number of distinct elements the stream encounters so far up to a factor `1±eps` with probability at least `1-delta`.
 - combine the sketches of two streams so that we can estimate the number of distinct elements of the combined stream.
 
-### Initialization
+### initialization
 
 To initialize an instance of this class, we can specify the following parameters:
 

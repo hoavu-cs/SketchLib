@@ -10,7 +10,7 @@ To import the class, use the following:
 from sketchlib.f2_estimate import F2Estimate
 ```
 
-### Overview
+### iverview
 
 The second frequency moment is often referred to as the surprise number, since it measures how uneven the distribution of elements in the stream is. For example, the frequency moment of the following stream 
 
@@ -27,7 +27,7 @@ The update time is `O(1/eps^2 log (1/delta))`. It supports the following operati
 
 
 
-### Initialization
+### initialization
 
 To initialize an instance of this class, we can specify the following parameters:
 

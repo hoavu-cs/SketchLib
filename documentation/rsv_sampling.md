@@ -6,11 +6,11 @@ This class provides an implementation of reservoir sampling in a data stream. To
 from sketchlib.rsv_sampling import RsvSampling
 ```
 
-### Overview
+### overview
 
 The class uses reservoir sampling to maintain k tokens uniformly sampled at random from a data stream of unknown length. The update time for each new token is constant, and the memory use is proportional to k times the size of a token.
 
-### Initialization
+### initialization
 
 To create a reservoir sampler, specify the desired sample size during initialization.
 

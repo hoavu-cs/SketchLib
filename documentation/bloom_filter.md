@@ -9,7 +9,7 @@ To import the class, use the following:
 ```python
 from sketchlib.bloom_filter import BloomFilter
 ```
-### Overview
+### overview
 
 The data structure allows three operations: 
 
@@ -25,7 +25,7 @@ If each element is an image of size `200kb`, then if we need to store `m = 10^6`
 
 Each operation takes roughly `O(log(1/delta))` time.
 
-### Initialization
+### initialization
 
 To initialize an instance of this class, we can specify the following parameters:
 
@@ -51,37 +51,6 @@ B = BloomFilter(n = n, delta = delta)
 
 for i in range(n):
     B.insert(str(i))
-```
-
-### delete
-
-To delete an element from the set, use the delete function. However, note that the overall correctness is only guaranteed if the element exists in the set. 
-
-For example,
-
-
-```python
-delta = 0.05
-n = 1000
-B = BloomFilter(n = 2*n, delta = delta)
-C = BloomFilter(n = 2*n, delta = delta)
-false_positives = 0
-
-for i in range(n):
-    B.insert(str(i))
-
-for i in range(int(n/2), int((3/2)*n)):
-    C.insert(str(i))
-
-B.merge(C)
-
-for j in range(2*n):
-    if j >= (3/2)*n and B.membership(str(j)) == True:
-        false_positives += 1
-
-print(false_positives)
-
->>> 12
 ```
 
 ### membership
@@ -113,6 +82,35 @@ print(false_positives)
 To merge with another Bloom filter with the same seed, use the merge function. The resulting filter will provide the answer to the union of two sets. 
 
 For example,
+
+```python
+delta = 0.05
+n = 1000
+B = BloomFilter(n = 2*n, delta = delta, seed=42)
+C = BloomFilter(n = 2*n, delta = delta, seed=42)
+false_positives = 0
+
+for i in range(n):
+    B.insert(str(i))
+
+for i in range(int(n/2), int((3/2)*n)):
+    C.insert(str(i))
+
+B.merge(C)
+
+for j in range(2*n):
+    if j >= (3/2)*n and B.membership(str(j)) == True:
+        false_positives += 1
+
+print(false_positives)
+
+>>> 12
+```
+
+### delete
+
+To delete an element from the set, use the delete function. However, note that the overall correctness is only guaranteed if the element exists in the set. For example,
+
 
 ```python
 delta = 0.05
@@ -169,7 +167,7 @@ print(false_positives)
 
 ### from_existing 
 
-Create a new Bloom Filter with similar parameters so that they can be merged later.
+Create a new Bloom Filter with similar parameters (which is the seeds to hash functions in this case) so that they can be merged later.
 
 ```python
 delta = 0.05

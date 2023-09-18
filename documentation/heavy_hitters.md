@@ -109,7 +109,7 @@ print(stream.get_heavy_hitters())
   
 ```  
   
-### + Operator  
+### + operator  
   
 If A is a sketch of some stream and B is a sketch of another stream, then A + B returns the merged sketch that provides the answer to the combined stream. 
 In other words, A = A+B is the same as A.merge(B).   
