@@ -11,6 +11,8 @@ This package contains various streaming algorithms that are useful for processin
 - Minhash
 - Reservoir Sampling
 
+You will need mmh3, a fast non-cryptographic hash function, to use this package. You can install it using `pip install mmh3`.
+
 Main contributor: Hoa Vu 
 
 Previous contributor: Daniel Barnas.
