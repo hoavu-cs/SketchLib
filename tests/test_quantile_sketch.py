@@ -14,14 +14,14 @@ class TestQuantileSketch(unittest.TestCase):
         naive_list = []
         m = 10
         epsilon = 0.001
-        sketch = QuantileSketch(epsilon=epsilon, delta=0.01, m=m, n=m, seed=42)
+        sketch = QuantileSketch(epsilon=epsilon, delta=0.01, max_count=m, n=m, seed=42)
 
         for i in range(1, m):
             sketch.insert(i)
             naive_list.append(i)
         
         true_counts = compute_true_counts(naive_list)
-        queries = [0.1, 0.5]
+        queries = [0.1, 0.5, 0.9]
 
         for q in queries:
             result = sketch.query(q)
@@ -35,7 +35,7 @@ class TestQuantileSketch(unittest.TestCase):
         m = 1000000
         n = 100
         epsilon = 0.01
-        sketch = QuantileSketch(epsilon=epsilon, delta=0.01, m=m, n=m, seed=42)
+        sketch = QuantileSketch(epsilon=epsilon, delta=0.01, max_count=m, n=m, seed=42)
         naive_list = []
 
         for elm in range(1, n+1):
@@ -58,7 +58,7 @@ class TestQuantileSketch(unittest.TestCase):
         m = 1000000
         n = 200
         epsilon = 0.01
-        sketch1 = QuantileSketch(epsilon=epsilon, delta=0.01, m=m, n=m, seed=42)
+        sketch1 = QuantileSketch(epsilon=epsilon, delta=0.01, max_count=m, n=n, seed=42)
         sketch2 = QuantileSketch.from_existing(sketch1)
         naive_list = []
 
@@ -80,7 +80,6 @@ class TestQuantileSketch(unittest.TestCase):
                 assert true_counts[result] >= (q - epsilon) * len(naive_list) 
             else:
                 assert true_counts[result] >= (q - epsilon) * len(naive_list) and true_counts[result-1] <= q * len(naive_list)
-
 
 if __name__ == '__main__':
     unittest.main()
