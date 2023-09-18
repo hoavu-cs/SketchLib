@@ -1,3 +1,4 @@
+# In progress
 from sketchlib.count_min import CountMin
 from math import log2, ceil, floor
 
@@ -72,7 +73,8 @@ class QuantileSketch:
         total_count = 0
         for a, b in intervals:
             level = int(log2(b - a + 1))
-            total_count += self.cm_sketch[level].estimate_count(str(a))
+            position = ceil(a / 2 ** level)
+            total_count += self.cm_sketch[level].estimate_count(str(position))
         return total_count
 
     def insert(self, x, count=1):
@@ -97,8 +99,6 @@ class QuantileSketch:
             intervals = self._decompose_into_dyadic_intervals(1, mid)
             total_count = self._estimate_total_count_given_intervals(intervals)
 
-            print(total_count)
-
             if total_count > q * self.l1_norm:
                 upper = mid
             elif total_count < q * self.l1_norm:
@@ -108,8 +108,6 @@ class QuantileSketch:
 
         intervals = self._decompose_into_dyadic_intervals(1, lower)
         total_count = self._estimate_total_count_given_intervals(intervals)
-
-        print(lower, total_count, self.l1_norm)
 
         if total_count > q * self.l1_norm:
             return lower
