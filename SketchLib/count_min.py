@@ -8,12 +8,9 @@ class CountMin:
 
     _max_128_int = pow(2, 128) - 1
 
-    def __init__(self, phi=0.05, epsilon=0.2, delta=0.05, seed=10):
-        self._epsilon = epsilon
-        self._phi = phi
+    def __init__(self, width=1, delta=0.05, seed=10):
         self._delta = delta
-        self._epsilon_star = self._phi * self._epsilon
-        self._width = ceil(1 / self._epsilon_star)
+        self._width = width
         self._depth = ceil(log(1 / self._delta))
         self._table = np.zeros((self._depth, self._width), dtype=int)
         self._hash_seeds = np.array([i * i * seed for i in range(self._depth)], dtype=int)
@@ -42,7 +39,9 @@ class CountMin:
             self._table[row, col] += count
 
     def estimate_count(self, token):
-        """ Get the estimate of the count of a token."""
+        """ Get the estimate of the count of a token. The estimate satisfies
+        true count <= estimate <= true count + phi * total count 
+        """
         estimates = np.zeros(self._depth, dtype=int)
         for row in range(self._depth):
             col = self._hash(token, self._hash_seeds[row])

@@ -45,7 +45,7 @@ class CountMinCashRegister(AbstractHeavyHitters):
         self._epsilon = epsilon
         self._delta = delta
         self._seed = seed
-        self._count_min = CountMin(phi=phi, epsilon=epsilon, delta=delta, seed=seed)
+        self._count_min = CountMin(width=ceil(1/(self._phi*self._epsilon)), delta=delta, seed=seed)
 
     def insert(self, token, count):
         """ Insert a token into the count-min sketch and update the heap of heavy hitters. """
