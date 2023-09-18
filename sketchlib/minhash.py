@@ -1,8 +1,9 @@
 import mmh3
 import math
 import random
-import numpy as np 
+import numpy as np
 from copy import deepcopy
+
 
 class MinHash:
     """ MinHash Sketch """
@@ -34,7 +35,7 @@ class MinHash:
             print("Merge attempted on incompatible minhash instances.")
 
     def __add__(self, other_minhash):
-        """ Performs merge but returns result in completely new minhash."""
+        """ Performs merge but returns result in completely new minhash. """
         merged_minhash = deepcopy(self)
         merged_minhash.merge(other_minhash)
         return merged_minhash
@@ -46,7 +47,7 @@ class MinHash:
 
     @classmethod
     def from_existing(cls, original):
-        """ Creates a new minhash based on the parameters of an existing minhash."""
+        """ Creates a new minhash based on the parameters of an existing minhash. """
         new_minhash = cls(epsilon=original._epsilon, hash_type=original._hash_type, seed=original._seed)
         return new_minhash
 
@@ -64,6 +65,5 @@ class MinHash:
         return counter / self._k
 
     def get_signature(self):
-        """ Returns the minhash signature."""
+        """ Returns the minhash signature. """
         return self._minhash_signature
-

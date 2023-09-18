@@ -2,6 +2,7 @@ from sketchlib.count_min import CountMin
 from math import log2, ceil, floor
 from copy import deepcopy
 
+
 class QuantileSketch:
     """ A quantile sketch based on Count-Min and dyadic intervals. """
 
@@ -15,11 +16,13 @@ class QuantileSketch:
         self._epsilon, self._delta, self._max_count, self._range_elements = epsilon, delta, max_count, n
         self._l1_norm, self._seed = 0, seed
         self._num_dyadic_intervals = ceil(log2(n)) + 1
-        
+
         # Initialize Count-Min sketch for each dyadic interval
-        cm_sketch_width = int(4 * log2(self._max_count) / epsilon)
-        self._cm_sketch = [CountMin(width=cm_sketch_width, delta=delta, seed=seed)
-                          for _ in range(self._num_dyadic_intervals + 1)]
+        cm_sketch_width = int(3 * log2(self._max_count) / epsilon)
+        self._cm_sketch = [
+            CountMin(width=cm_sketch_width, delta=delta, seed=seed) 
+            for _ in range(self._num_dyadic_intervals + 1)
+        ]
 
     def _decompose_into_dyadic_intervals(self, lower, upper):
         """ Compute the dyadic intervals decomposition of [lower, upper]. """
@@ -49,7 +52,7 @@ class QuantileSketch:
         """ Insert an element x into the sketch with a given count. """
         for i, pos in enumerate(self._positions_in_intervals(x)):
             self._cm_sketch[i].insert(str(pos), count)
-        self._l1_norm += count        
+        self._l1_norm += count
 
     def query(self, q):
         """ Query the sketch for the qth quantile. """
@@ -57,7 +60,9 @@ class QuantileSketch:
         result = None
         while lower <= upper:
             mid = (lower + upper) // 2
-            total_count = self._estimate_total_count_given_intervals(self._decompose_into_dyadic_intervals(1, mid))
+            total_count = self._estimate_total_count_given_intervals(
+                self._decompose_into_dyadic_intervals(1, mid)
+            )
             if total_count < threshold:
                 lower = mid + 1
             else:
@@ -79,5 +84,10 @@ class QuantileSketch:
     @classmethod
     def from_existing(cls, original):
         """ Create a new instance from an existing instance. """
-        return cls(epsilon=original._epsilon, delta=original._delta, max_count=original._max_count,
-                   n=original._range_elements, seed=original._seed)
+        return cls(
+            epsilon=original._epsilon, 
+            delta=original._delta, 
+            max_count=original._max_count,
+            n=original._range_elements, 
+            seed=original._seed
+        )

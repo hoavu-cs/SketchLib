@@ -3,18 +3,18 @@ import mmh3
 import math
 from bisect import bisect_left, insort
 import statistics
-from copy import deepcopy 
+from copy import deepcopy
 import numpy as np
 
 class AbstractDistinctCount:
     @abstractmethod
     def insert(self, token):
         pass
-    
+
     @abstractmethod
     def merge(self, another_sketch):
         pass
-        
+
     @abstractmethod
     def estimator(self):
         pass
@@ -32,7 +32,7 @@ class AbstractDistinctCount:
 
 class LogDistinctCount(AbstractDistinctCount):
     """ This class solves the distinct count problem using a log sketch.
-    This folows the basic idea of Fjarolet and Martin's algorithm.
+    This follows the basic idea of Flajolet and Martin's algorithm.
     We however maintain the lowest 1/eps hash values instead of the lowest as
     suggested in Bar-Yossef et al. (2002) to have a faster update time.
     """
@@ -52,10 +52,12 @@ class LogDistinctCount(AbstractDistinctCount):
         self._naive_lst = set()
 
     def _binary_search(self, a, x):
+        """ Performs binary search on a sorted list a to find the position of x. """
         i = bisect_left(a, x)
         return i if i != len(a) and a[i] == x else -1
 
     def _hash(self, token, seed):
+        """ Compute hash of the token based on the seed and hash_type. """
         if self._hash_type == "mmh3":
             return mmh3.hash128(token, seed, signed=False) / LogDistinctCount._max_128_int
 
@@ -97,5 +99,6 @@ class LogDistinctCount(AbstractDistinctCount):
 
     @classmethod
     def from_existing(cls, original):
-        return cls(epsilon=original._epsilon, delta=original._delta,\
-             hash_type=original._hash_type, seed=original._seed)
+        """ Create a new sketch with the same parameters as an existing sketch. """
+        return cls(epsilon=original._epsilon, delta=original._delta,
+                   hash_type=original._hash_type, seed=original._seed)
