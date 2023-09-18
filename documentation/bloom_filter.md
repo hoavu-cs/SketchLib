@@ -17,7 +17,7 @@ The data structure allows three operations:
 - delete an element from the set
 - check if an element is in the set
 
-If there are at most `n` elements in the set and `delta` is the false positive rate (i.e., the probability that an element is not in the set but is falsely reported as being in the set by the data structure), then the data structure uses roughly `O~(n * log(1/delta))` bits of memory for any reasonable `n` that is at most the number of particles in the observable universe (excluding overheads). 
+If there are at most `n` elements in the set and `delta` is the false positive rate (i.e., the probability that an element is not in the set but is falsely reported as being in the set by the data structure), then the data structure uses roughly `O~(n * log(1/delta))` bits of memory (excluding overheads). 
 
 The update time is `O(1/eps^2 log (1/delta))`.
 
