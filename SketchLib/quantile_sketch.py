@@ -115,16 +115,14 @@ class QuantileSketch:
             return lower + 1
 
     def merge(self, other_sketch):
-        """ 
-        Merge self with another compatible sketch (same seed, epsilon, and delta)
+        """  Merge self with another compatible sketch (same seed, epsilon, and delta)
         """ 
         self.l1_norm += other_sketch.l1_norm
         for i in range(self.num_dyadic_intervals + 1):
             self.cm_sketch[i].merge(other_sketch.cm_sketch[i])
 
     def __add__(self, other):
-        """ 
-        Return a new sketch that is the merge of self and other.
+        """  Return a new sketch that is the merge of self and other.
         """ 
         merged_sketch = deepcopy(self)
         merged_sketch.merge(other)
