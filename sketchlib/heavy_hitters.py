@@ -36,6 +36,12 @@ class CountMinCashRegister(AbstractHeavyHitters):
         each token count must be greater than 0 (c > 0). """
 
     def __init__(self, phi=0.05, epsilon=0.2, delta=0.01, seed=42):
+        """
+        phi: threshold for heavy hitters
+        epsilon: not return any element that occurs less than (phi-epsilon) * l1_norm
+        delta: failure probability
+        seed: seed for hash function
+        """
         self._init_params(phi, epsilon, delta, seed)
         self._l1_norm = 0
         self._min_heap = []

@@ -13,18 +13,16 @@ class F2Estimate():
     # Class-level constant for 128-bit maximum integer
     _max_128_int = pow(2, 128) - 1
     
-    def __init__(self, epsilon=0.01, delta=0.01, hash_type="mmh3", seed=42):
+    def __init__(self, epsilon=0.01, delta=0.01, seed=42):
         """ 
         Initialize an F2Estimate instance.
         epsilon: relative error,
         delta: failure probability,
-        hash_type: hash function to use,
         seed: seed for hash function.
         """
         
         self._epsilon = epsilon
         self._delta = delta
-        self._hash_type = hash_type
         self._seed = seed
         self._c = 3  # Constant multiplier to increase table width and depth
 
@@ -38,11 +36,8 @@ class F2Estimate():
 
     def _hash(self, token, seed):
         """ Compute the {-1,+1} hash of a token based on the seed. """
-        if self._hash_type == "mmh3":
-            x = mmh3.hash128(token, seed, signed=False) / F2Estimate._max_128_int
-            return -1 if x <= 0.5 else 1
-        else:
-            return 0
+        x = mmh3.hash128(token, seed, signed=False) / F2Estimate._max_128_int
+        return -1 if x <= 0.5 else 1
 
     def insert(self, x, y):
         """ Insert token x into the stream with weight y. """
@@ -68,5 +63,4 @@ class F2Estimate():
     @classmethod
     def from_existing(cls, original):
         """ Create a new F2Estimate instance based on the parameters of an existing one. """
-        return F2Estimate(epsilon=original._epsilon, delta=original._delta, 
-                          hash_type=original._hash_type, seed=original._seed)
+        return F2Estimate(epsilon=original._epsilon, delta=original._delta, seed=original._seed)

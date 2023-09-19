@@ -39,10 +39,14 @@ class LogDistinctCount(AbstractDistinctCount):
 
     _max_128_int = pow(2, 128) - 1
 
-    def __init__(self, epsilon=0.01, delta=0.01, hash_type="mmh3", seed=42):
+    def __init__(self, epsilon=0.01, delta=0.01, seed=42):
+        """
+        epsilon: approximation error,
+        delta: failure probability,
+        seed: seed for hash function.
+        """
         self._epsilon = epsilon
         self._delta = delta
-        self._hash_type = hash_type
         self._seed = seed
         self._c = 2
         self._width = self._c * int((1 / self._epsilon) ** 2)
@@ -58,8 +62,7 @@ class LogDistinctCount(AbstractDistinctCount):
 
     def _hash(self, token, seed):
         """ Compute hash of the token based on the seed and hash_type. """
-        if self._hash_type == "mmh3":
-            return mmh3.hash128(token, seed, signed=False) / LogDistinctCount._max_128_int
+        return mmh3.hash128(token, seed, signed=False) / LogDistinctCount._max_128_int
 
     def _insert_into_table(self, i, hash_value):
         """ Insert a hash value into the i-th row of the table while maintaining the sorted order. """
@@ -100,5 +103,4 @@ class LogDistinctCount(AbstractDistinctCount):
     @classmethod
     def from_existing(cls, original):
         """ Create a new sketch with the same parameters as an existing sketch. """
-        return cls(epsilon=original._epsilon, delta=original._delta,
-                   hash_type=original._hash_type, seed=original._seed)
+        return cls(epsilon=original._epsilon, delta=original._delta, seed=original._seed)
