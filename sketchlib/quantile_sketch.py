@@ -24,14 +24,32 @@ class QuantileSketch:
             for _ in range(self._num_dyadic_intervals + 1)
         ]
 
-    def _decompose_into_dyadic_intervals(self, lower, upper):
+    def _find_largest_inner_dyadic(self, a, b):
+        """ Return the largest dyadic interval that is contained in [a, b]."""
+        k = m = 0
+        a -= 1
+        b -= 1
+        k_potential = floor(log2(b - a + 1))
+
+        for i in range(k_potential, -1, -1):
+            m_potential = ceil(a / (2 ** i))
+            upper_limit = (m_potential + 1) * (2 ** i) - 1
+            if upper_limit <= b:
+                k = i
+                m = m_potential
+                break
+
+        return [m * (2**k) + 1, (m + 1) * (2**k)]
+
+    def _dyadic_decomposition(self, lower, upper):
         """ Compute the dyadic intervals decomposition of [lower, upper]. """
         if lower > upper:
             return []
         elif lower == upper:
-            return [(lower, upper)]
-        split_point = lower + 2 ** floor(log2(upper - lower)) - 1
-        return [(lower, split_point)] + self._decompose_into_dyadic_intervals(split_point + 1, upper)
+            return [[lower, upper]]
+        else:
+            interval = self._find_largest_inner_dyadic(lower, upper)
+            return self._dyadic_decomposition(lower, interval[0]-1) + [interval] + self._dyadic_decomposition(interval[1]+1, upper)
 
     def _positions_in_intervals(self, x):
         """ Return the position of the dyadic intervals that x belongs to in each level. """
@@ -61,7 +79,7 @@ class QuantileSketch:
         while lower <= upper:
             mid = (lower + upper) // 2
             total_count = self._estimate_total_count_given_intervals(
-                self._decompose_into_dyadic_intervals(1, mid)
+                self._dyadic_decomposition(1, mid)
             )
             if total_count < threshold:
                 lower = mid + 1
