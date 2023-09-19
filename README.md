@@ -15,5 +15,5 @@ You will need mmh3, a fast non-cryptographic hash function, to use this package.
 
 Main contributor: Hoa Vu 
 
-Previous contributor: Daniel Barnas.
+Past contributor: Daniel Barnas.
 
