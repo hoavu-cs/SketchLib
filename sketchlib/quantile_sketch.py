@@ -6,19 +6,19 @@ from copy import deepcopy
 class QuantileSketch:
     """ A quantile sketch based on Count-Min and dyadic intervals. """
 
-    def __init__(self, epsilon=0.1, delta=0.01, max_count=10**9, n=10**9, seed=42):
+    def __init__(self, epsilon=0.1, delta=0.01, n=10**9, seed=42):
         """
         epsilon: error bound
         delta: probability of error
         m: maximum number of elements in the stream
         n: the elements in the stream are in the range [1, n]
         """
-        self._epsilon, self._delta, self._max_count, self._range_elements = epsilon, delta, max_count, n
+        self._epsilon, self._delta, self._range_elements = epsilon, delta, n
         self._l1_norm, self._seed = 0, seed
         self._num_dyadic_intervals = ceil(log2(n)) + 1
 
         # Initialize Count-Min sketch for each dyadic interval
-        cm_sketch_width = int(2 * log2(self._max_count) / epsilon)
+        cm_sketch_width = int(2 * log2(self._range_elements) / epsilon)
         self._cm_sketch = [
             CountMin(width=cm_sketch_width, delta=delta, seed=seed) 
             for _ in range(self._num_dyadic_intervals + 1)
@@ -100,7 +100,6 @@ class QuantileSketch:
         return cls(
             epsilon=original._epsilon, 
             delta=original._delta, 
-            max_count=original._max_count,
             n=original._range_elements, 
             seed=original._seed
         )
