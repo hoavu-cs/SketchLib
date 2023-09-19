@@ -12,11 +12,11 @@ class TestQuantileSketch(unittest.TestCase):
     
     def test_insert_query_basic(self):
         naive_list = []
-        m = 10
+        n = 10
         epsilon = 0.001
-        sketch = QuantileSketch(epsilon=epsilon, delta=0.01, max_count=m, n=m, seed=42)
+        sketch = QuantileSketch(epsilon=epsilon, delta=0.01, n=n, seed=42)
 
-        for i in range(1, m):
+        for i in range(1, n+1):
             sketch.insert(i)
             naive_list.append(i)
         
@@ -32,10 +32,9 @@ class TestQuantileSketch(unittest.TestCase):
 
     def test_insert_query_advanced(self):
         naive_list = []
-        m = 1000000
         n = 100
         epsilon = 0.01
-        sketch = QuantileSketch(epsilon=epsilon, delta=0.01, max_count=m, n=m, seed=42)
+        sketch = QuantileSketch(epsilon=epsilon, delta=0.01, n=n, seed=42)
         naive_list = []
 
         for elm in range(1, n+1):
@@ -55,10 +54,9 @@ class TestQuantileSketch(unittest.TestCase):
     def test_merge(self):
         naive_list1 = []
         naive_list2 = []
-        m = 1000000
-        n = 200
+        n = 20000
         epsilon = 0.01
-        sketch1 = QuantileSketch(epsilon=epsilon, delta=0.01, max_count=m, n=n, seed=42)
+        sketch1 = QuantileSketch(epsilon=epsilon, delta=0.01, n=n, seed=42)
         sketch2 = QuantileSketch.from_existing(sketch1)
         naive_list = []
 
@@ -82,10 +80,9 @@ class TestQuantileSketch(unittest.TestCase):
                 assert true_counts[result] >= (q - epsilon) * len(naive_list) and true_counts[result-1] <= q * len(naive_list)
 
     def test_merge_2(self):
-        m = 1000000
         n = 200
         epsilon = 0.1
-        sketch1 = QuantileSketch(epsilon=epsilon, delta=0.01, max_count=m, n=n, seed=42)
+        sketch1 = QuantileSketch(epsilon=epsilon, delta=0.01, n=n, seed=42)
         sketch2 = QuantileSketch.from_existing(sketch1)
         naive_list = []
 
