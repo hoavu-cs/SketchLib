@@ -18,7 +18,7 @@ class QuantileSketch:
         self._num_dyadic_intervals = ceil(log2(n)) + 1
 
         # Initialize Count-Min sketch for each dyadic interval
-        cm_sketch_width = int(3 * log2(self._max_count) / epsilon)
+        cm_sketch_width = int(2 * log2(self._max_count) / epsilon)
         self._cm_sketch = [
             CountMin(width=cm_sketch_width, delta=delta, seed=seed) 
             for _ in range(self._num_dyadic_intervals + 1)
@@ -30,7 +30,6 @@ class QuantileSketch:
         a -= 1
         b -= 1
         k_potential = floor(log2(b - a + 1))
-
         for i in range(k_potential, -1, -1):
             m_potential = ceil(a / (2 ** i))
             upper_limit = (m_potential + 1) * (2 ** i) - 1
@@ -38,7 +37,6 @@ class QuantileSketch:
                 k = i
                 m = m_potential
                 break
-
         return [m * (2**k) + 1, (m + 1) * (2**k)]
 
     def _dyadic_decomposition(self, lower, upper):
@@ -50,10 +48,6 @@ class QuantileSketch:
         else:
             interval = self._find_largest_inner_dyadic(lower, upper)
             return self._dyadic_decomposition(lower, interval[0]-1) + [interval] + self._dyadic_decomposition(interval[1]+1, upper)
-
-    def _positions_in_intervals(self, x):
-        """ Return the position of the dyadic intervals that x belongs to in each level. """
-        return [ceil(x / (2 ** i)) for i in range(self._num_dyadic_intervals + 1)]
 
     def _estimate_total_count_given_intervals(self, intervals):
         """ Given a list of dyadic intervals, return the estimate of the count of elements 
@@ -68,8 +62,9 @@ class QuantileSketch:
 
     def insert(self, x, count=1):
         """ Insert an element x into the sketch with a given count. """
-        for i, pos in enumerate(self._positions_in_intervals(x)):
-            self._cm_sketch[i].insert(str(pos), count)
+        for i in range(self._num_dyadic_intervals + 1):
+            position = ceil(x / (2 ** i))
+            self._cm_sketch[i].insert(str(position), count)
         self._l1_norm += count
 
     def query(self, q):
