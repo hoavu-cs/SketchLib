@@ -1,13 +1,12 @@
 ## Quantile Sketch
 
 This class provides a space and time efficient data structure to approximate quantiles.
-Given a stream of tokens (with possibly duplicates) with values in the range `1, 2, 3,..., n`, 
-we build a data structure (based on Count Min sketch and dyadic intervals) that allow us to estimate the quantiles of the stream.
+Given a stream of tokens (with possibly duplicates) with values in the range `1, 2, 3,..., n`, we build a data structure (based on Count Min sketch and dyadic intervals) that allow us to estimate the quantiles of the stream.
 
-Let m be the total number of tokens. Given `q` in the range `0,1`, we can estimate the `q`-quantile of the stream by output `i` such that
+Let m be the total number of tokens (possibly fractional). Given `q` in the range `0,1`, we can estimate the `q`-quantile of the stream by output `i` such that
 
-- The count of tokens `1, 2, ..., i` is at least `(q - epsilon) * n`.
-- The count of tokens `1, 2,..., i-1` is less than `q * n`.
+- The count of tokens `1, 2, ..., i` is at least `(q - epsilon) * m`.
+- The count of tokens `1, 2,..., i-1` is less than `q * m`.
 
 For example, if `epsilon = 0.1` if we have a stream of 10 tokens, 
 `1, 1, 2, 2, 2, 3, 3, 3, 3, 3`, 
@@ -34,23 +33,20 @@ To initialize an instance of this class, we can specify the following parameters
 - `epsilon`: controls the estimate's quality. The default value is `0.01`.
 - `delta`: controls the failure probability. The default value is `0.01`.
 - `n`: the range of the values. The default value is `10^6`. Note that all insertions must be in the range `1,2,...,n`. You can pick a sizable upper bound since the complexity only depends on `log n`.
-- `max_count`: the maximum total count of all tokens. You can pick a good upper bound since the space and time complexity only depends on `log max_count`. The default value is `10^9`.
 - `seed`: the seed for randomness. The default value is `42`.
 
 For example,
 
 ```python
-stream = QuantileSketch(epsilon=0.01, delta=0.01, n=10**6, max_count=10**9, seed=1)
+stream = QuantileSketch(epsilon=0.01, delta=0.01, n=10**6, seed=1)
 ```
 
 ### insert
 
-Insert a new token with a count (default=1) into the stream. The token must be an integer between `1` and `n`.
-
-For example,
+Insert a new token with a count (default=1) into the stream. The token must be an integer between `1` and `n`. The count can be any non-negative (possibly fractional) number. For example,
 
 ```python
-stream = QuantileSketch(epsilon=0.01, delta=0.01, n=10**6, max_count=10**9, seed=1)
+stream = QuantileSketch(epsilon=0.01, delta=0.01, n=10**6, seed=1)
 for i in range(1, 1000):
     stream.insert(x=i)
 
@@ -65,11 +61,12 @@ To query for an approximate q-quantile, use `.query(q)`. This will return an int
 - The count of tokens `1,2,...,i-1` is less than `q * n`.
 
 ```python
-m = 1000
+n = 1000
 epsilon = 0.1
-sketch = QuantileSketch(epsilon=epsilon, delta=0.01, max_count=m, n=m, seed=42)
+sketch = QuantileSketch(epsilon=epsilon, delta=0.01, n=n, seed=42)
+naive_list = []
 
-for i in range(1, m):
+for i in range(1, n):
     sketch.insert(i)
     naive_list.append(i)
     
@@ -93,10 +90,9 @@ Create a new sketch based on the parameters (e.g., seed, max_count, n) of an exi
 For example,
 
 ```python
-m = 1000000
 n = 200
 epsilon = 0.01
-sketch1 = QuantileSketch(epsilon=epsilon, delta=0.01, max_count=m, n=m, seed=42)
+sketch1 = QuantileSketch(epsilon=epsilon, delta=0.01, n=n, seed=42)
 sketch2 = QuantileSketch.from_existing(sketch1)
 
 ```
@@ -108,10 +104,9 @@ Merge with another sketch with the same parameters.
 For example,
 
 ```python
-m = 1000000
 n = 200
 epsilon = 0.1
-sketch1 = QuantileSketch(epsilon=epsilon, delta=0.01, max_count=m, n=n, seed=42)
+sketch1 = QuantileSketch(epsilon=epsilon, delta=0.01, n=n, seed=42)
 sketch2 = QuantileSketch.from_existing(sketch1)
 naive_list = []
 
