@@ -1,17 +1,21 @@
 import mmh3
 import math
 import random
-import numpy as np 
+import numpy as np
 from copy import deepcopy
+
 
 class MinHash:
     """ MinHash Sketch """
 
     max_128_int = pow(2, 128) - 1
 
-    def __init__(self, epsilon=0.1, hash_type="mmh3", seed=42):
+    def __init__(self, epsilon=0.1, seed=42):
+        """
+        epsilon: approximation error for Jaccard similarity,
+        seed: seed for hash function.
+        """
         self._epsilon = epsilon
-        self._hash_type = hash_type
         self._k = 4 * math.ceil(1 / pow(self._epsilon, 2))
         self._seed = seed
         self._seeds = np.array([self._seed * i for i in range(self._k)])
@@ -34,20 +38,19 @@ class MinHash:
             print("Merge attempted on incompatible minhash instances.")
 
     def __add__(self, other_minhash):
-        """ Performs merge but returns result in completely new minhash."""
+        """ Performs merge but returns result in completely new minhash. """
         merged_minhash = deepcopy(self)
         merged_minhash.merge(other_minhash)
         return merged_minhash
 
     def _hash(self, token, seed):
         """ Compute the hash of a token. """
-        if self._hash_type == "mmh3":
-            return mmh3.hash(token, seed, signed=False) / MinHash.max_128_int
+        return mmh3.hash(token, seed, signed=False) / MinHash.max_128_int
 
     @classmethod
     def from_existing(cls, original):
-        """ Creates a new minhash based on the parameters of an existing minhash."""
-        new_minhash = cls(epsilon=original._epsilon, hash_type=original._hash_type, seed=original._seed)
+        """ Creates a new minhash based on the parameters of an existing minhash. """
+        new_minhash = cls(epsilon=original._epsilon, seed=original._seed)
         return new_minhash
 
     def _check_mergeability(self, other_minhash):
@@ -64,6 +67,5 @@ class MinHash:
         return counter / self._k
 
     def get_signature(self):
-        """ Returns the minhash signature."""
+        """ Returns the minhash signature. """
         return self._minhash_signature
-

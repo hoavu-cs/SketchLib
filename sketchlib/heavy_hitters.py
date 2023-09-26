@@ -27,14 +27,21 @@ class AbstractHeavyHitters:
         merged_sketch.merge(other)
         return merged_sketch
 
+
 # --------------------------------------------------------------------------
 
 class CountMinCashRegister(AbstractHeavyHitters):
     """ This class solves the heavy hitters problem using a count-min data
         structure. It works only for the cash register model of a stream where
         each token count must be greater than 0 (c > 0). """
-        
+
     def __init__(self, phi=0.05, epsilon=0.2, delta=0.01, seed=42):
+        """
+        phi: threshold for heavy hitters
+        epsilon: not return any element that occurs less than (phi-epsilon) * l1_norm
+        delta: failure probability
+        seed: seed for hash function
+        """
         self._init_params(phi, epsilon, delta, seed)
         self._l1_norm = 0
         self._min_heap = []
@@ -45,7 +52,7 @@ class CountMinCashRegister(AbstractHeavyHitters):
         self._epsilon = epsilon
         self._delta = delta
         self._seed = seed
-        self._count_min = CountMin(width=ceil(1/(self._phi*self._epsilon)), delta=delta, seed=seed)
+        self._count_min = CountMin(width=ceil(1 / (self._phi * self._epsilon)), delta=delta, seed=seed)
 
     def insert(self, token, count):
         """ Insert a token into the count-min sketch and update the heap of heavy hitters. """
@@ -63,7 +70,7 @@ class CountMinCashRegister(AbstractHeavyHitters):
         point_query = self._count_min.estimate_count(token)
         if point_query >= cutoff:
             heappush(self._min_heap, (point_query, token))
-        
+
         self.remove_below_cutoff(cutoff)
 
     def remove_below_cutoff(self, cutoff):
@@ -120,7 +127,7 @@ class MisraGries(AbstractHeavyHitters):
         for _ in range(count):
             self._m += 1
             self._update_counters(token)
-        
+
     def _update_counters(self, token):
         """ Update the counters based on the newly inserted token. """
         if token in self._counters:
@@ -161,11 +168,3 @@ class MisraGries(AbstractHeavyHitters):
                     keys_to_delete.append(key)
             for key in keys_to_delete:
                 del self._counters[key]
-
-    @classmethod
-    def from_phi_and_eps(cls, phi=0.0025, epsilon=0.2):
-        new_instance = cls()
-        new_instance._init_params(phi=phi, epsilon=epsilon)
-        return new_instance
-
-        
