@@ -1,6 +1,10 @@
 ## LogDistinctCount
 
-This class provides a space and time efficient data structure (called a sketch) to estimate the number of distinct element up to a factor `(1 ± epsilon)` with probability at least `1-delta` in a data stream. This is the implementation of the first algorithm in the paper "Counting Distinct Elements in a Data Stream" by Ziv Bar-Yossef, T. S. Jayram, Ravi Kumar, D. Sivakumar & Luca Trevisan. The data structure uses roughly `O~(1/eps^2 * log(1/delta))` memory (excluding overheads). This is currently the only implementation.
+This class provides a space and time efficient data structure (called a sketch) to estimate the number of distinct element up to a factor `(1 ± eps)` with probability at least `1-delta` in a data stream. This is the implementation of the first algorithm in the paper "Counting Distinct Elements in a Data Stream" by Ziv Bar-Yossef, T. S. Jayram, Ravi Kumar, D. Sivakumar & Luca Trevisan. 
+
+The data structure uses roughly `O~(1/eps^2 * log(1/delta))` memory (excluding overheads) with update time `O(log 1/eps)`.
+
+This is currently the only implementation.
 
 
 To import the class, use the following:
@@ -11,7 +15,7 @@ from sketchlib.distinct_count import LogDistinctCount
 
 ### overview
 
-The update time is `O(log 1/eps)`. It supports the following operations:
+This sketching data structure supports the following operations:
 
 - insert a token to the stream.
 - return the estimate for number of distinct elements the stream encounters so far up to a factor `1±eps` with probability at least `1-delta`.
@@ -23,7 +27,7 @@ To initialize an instance of this class, we can specify the following parameters
 
 - `delta`: controls the failure probability. The default value is `0.01`.
 - `epsilon`: controls the estimate's quality. The default value is `0.01`.
-- `seed`: the seed for randomness. The default value is `42`.
+- `seed`: the seed for hash functions' randomness. The default value is `42`.
 
 
 For example,
