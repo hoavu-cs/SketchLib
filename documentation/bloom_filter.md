@@ -1,6 +1,6 @@
 ## BloomFilter
 
-This class provides an implementation of Bloom Filter, a space and time-efficient approach to represent a set that supports insertions, deletions, and membership queries. 
+This class provides an implementation of Counting Bloom Filter, a space and time-efficient approach to represent a set that supports insertions, deletions, and membership queries. 
 
 The Bloom Filter was first introduced in the paper "Space/Time Trade-offs in Hash Coding with Allowable Errors" by Burton H. Bloom.
 
@@ -17,13 +17,11 @@ The data structure allows three operations:
 - delete an element from the set
 - check if an element is in the set
 
-If there are at most `n` elements in the set and `delta` is the false positive rate (i.e., the probability that an element is not in the set but is falsely reported as being in the set by the data structure), then the data structure uses roughly `O~(n * log(1/delta))` bits of memory (excluding overheads). 
-
-The update time is `O(1/eps^2 log (1/delta))`.
-
-If each element is an image of size `200kb`, then if we need to store `m = 10^6` images, then the total space is `2 * 10^8 Kb = 200Gb`. So if we allow `1%` false positive rate, then the space that Bloom Filter uses is `10^6  * ln(log(1/0.01))/ln(2)` bits which is approximate `0.2754 Mb`. This is a big saving.
+If there are at most `n` elements in the set and `delta` is the false positive rate (i.e., the probability that an element is not in the set but is falsely reported as being in the set by the data structure), then the data structure uses roughly `1.44 n  log(1/delta))` bits of memory (excluding overheads). 
 
 Each operation takes roughly `O(log(1/delta))` time.
+
+For example, if each element is an image of size `200kb`, then if we need to store `m = 10^6` images, then the total space is `2 * 10^8 Kb = 200Gb`. So if we allow `1%` false positive rate, then the space that Bloom Filter uses is `10^6  * ln(log(1/0.01))/ln(2)` bits which is approximate `0.2754 Mb`. This is a big saving. Note that Bloom Filter does not store the actual images.
 
 ### initialization
 
@@ -109,7 +107,7 @@ print(false_positives)
 
 ### delete
 
-To delete an element from the set, use the delete function. However, note that the overall correctness is only guaranteed if the element exists in the set. For example,
+To delete an element from the set, use the delete function. However, note that the overall correctness is only guaranteed if the element exists in the set when you try to delete it. For example,
 
 
 ```python
@@ -167,7 +165,7 @@ print(false_positives)
 
 ### from_existing 
 
-Create a new Bloom Filter with similar parameters (which is the seeds to hash functions in this case) so that they can be merged later.
+Create a new Bloom Filter with similar parameters (which is the seed to hash functions in this case) so that they can be merged later.
 
 ```python
 delta = 0.05
