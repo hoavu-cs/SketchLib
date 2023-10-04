@@ -51,7 +51,7 @@ class LogDistinctCount(AbstractDistinctCount):
         self._c = 2
         self._width = self._c * int((1 / self._epsilon) ** 2)
         self._depth = self._c * int(math.log(1 / self._delta, 2))
-        self._seeds = [self._seed * i for i in range(self._depth)]
+        self._seeds = np.arange(self._depth) * self._seed
         self._table = [[] for _ in range(self._depth)]
         self._naive_lst = set()
 

@@ -32,7 +32,7 @@ class F2Estimate():
 
         # Initialize hash table and seeds
         self._table = np.zeros((self._depth, self._width), dtype=int)
-        self._seeds = np.array([[self._seed * i * j for j in range(self._width)] for i in range(self._depth)])
+        self._seeds = (np.arange(self._depth * self._width) * self._seed).reshape(self._depth, self._width)
 
     def _hash(self, token, seed):
         """ Compute the {-1,+1} hash of a token based on the seed. """

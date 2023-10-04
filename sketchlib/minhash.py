@@ -18,7 +18,7 @@ class MinHash:
         self._epsilon = epsilon
         self._k = 4 * math.ceil(1 / pow(self._epsilon, 2))
         self._seed = seed
-        self._seeds = np.array([self._seed * i for i in range(self._k)])
+        self._seeds = np.arange(self._k) * self._seed
         self._minhash_signature = np.ones(self._k, dtype=float)
 
     def insert(self, token):

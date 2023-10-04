@@ -24,7 +24,7 @@ class CountMin:
         self._table = np.zeros((self._depth, self._width), dtype=int)
         
         # Initialize hash seeds for each depth layer
-        self._hash_seeds = np.array([i * i * seed for i in range(self._depth)], dtype=int)
+        self._hash_seeds = np.arange(self._depth) * seed
 
     @classmethod
     def from_existing(cls, original_cm):
